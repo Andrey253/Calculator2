@@ -11,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView  resultScreen;                         // View  результата
     private TextView  InScreen;                             // View вводимой формулы
     private String resultText = "Здесь будет результат";    // Текс результата
-    private String InText = "Вводимая формула";             // Текст вводимой формулы
+    private String InText="";             // Текст вводимой формулы
     private float subresult;// не могу перекоммитить 2
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickSkCl(View v){ // Проверка разрешенияя на ввод " ) "
         Button b = (Button) v;
-        InText = countSymbol (InText,'(' ) > countSymbol (InText, ')' ) //  Если количество скобок " ( " не больше " ) "
-                && lastCharIsNum(InText) ? InText+b.getText(): InText;                  // то ввод " ) " запрещен
+        InText = enableSkCl(InText) ? InText+b.getText(): InText;                  // то ввод " ) " запрещен
         updateIn();
     }
     public void onClickSkOp(View v){
@@ -118,8 +117,17 @@ public class MainActivity extends AppCompatActivity {
     public static boolean enableSkOp(String text)  // Проверка является ли последний символ числом
     {
         char Char;
+        if (text.length()==0) return true;
         Char=text.charAt(text.length() - 1);
-        if (text.length()==0 || Char=='+' ||Char=='-' ||Char=='x' ||Char=='÷')
+        if ( Char=='+' ||Char=='-' ||Char=='x' ||Char=='÷' ||Char=='(')
+            return true;
+        return  false;
+    }
+    public static boolean enableSkCl(String text)  // Проверка является ли последний символ числом
+    {
+        char Char;
+        Char=text.charAt(text.length() - 1);
+        if (countSymbol (text,'(' ) > countSymbol (text, ')' ) && (Char=='.' ||Char==')' ||Char=='0' || Char=='1' ||Char=='2' ||Char=='3' ||Char=='4' ||Char=='5' ||Char=='6' ||Char=='7'|| Char=='8' ||Char=='9'))
             return true;
         return  false;
     }

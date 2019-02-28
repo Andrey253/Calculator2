@@ -47,12 +47,9 @@ public class MainActivity extends AppCompatActivity {
         updateIn();
     }
     public void onClickOperator(View v){
-        if(resultText != ""){
-            clear();
-            updateIn();
-        }
         Button b = (Button) v;
-        InText += (String) b.getText();
+        if (InText.length ()!=0 && b.getText()!="+" && b.getText()!="-" && b.getText()!="x" && b.getText()!="÷" && b.getText()!="/" && b.getText()!=".")
+        InText +=  b.getText();
         updateIn();
     }
     public void onClickTchk(View v){
@@ -68,16 +65,6 @@ public class MainActivity extends AppCompatActivity {
         InText = "";
         updateIn();
     }
-    public void onClickDr(View v){
-        if(resultText != ""){
-            clear();
-            updateIn();
-        }
-        Button b = (Button) v;
-        InText += b.getText();
-        updateIn();
-    }
-
     public void onClickNumber(View v){
         if(resultText != ""){
             clear();

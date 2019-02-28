@@ -73,7 +73,7 @@
         android:id="@+id/btnDr"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:onClick="onClickDr"
+        android:onClick="onClickOperator"
         android:text="@string/btnDr"
         android:textColorLink="@color/colorPrimary"
         android:textSize="30sp"

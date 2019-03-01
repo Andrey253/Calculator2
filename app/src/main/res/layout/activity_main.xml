@@ -14,7 +14,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="ыва"
+        android:text=""
         android:textDirection="rtl"
         android:textSize="38sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +28,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="4545"
+        android:text=""
         android:textAlignment="textEnd"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +40,7 @@
         android:id="@+id/btnSkCl"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:onClick="onClickSkCl"
+        android:onClick="onClickButton"
         android:text="@string/btnSkCl"
         android:textColorLink="@color/colorPrimary"
         android:textSize="50sp"
@@ -51,7 +51,7 @@
         android:id="@+id/btnSkOp"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:onClick="onClickSkOp"
+        android:onClick="onClickButton"
         android:text="@string/btnSkOp"
         android:textColorLink="@color/colorPrimary"
         android:textSize="50sp"
@@ -73,7 +73,7 @@
         android:id="@+id/btnDr"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:onClick="onClickOperator"
+        android:onClick="onClickButton"
         android:text="@string/btnDr"
         android:textColorLink="@color/colorPrimary"
         android:textSize="30sp"
@@ -84,7 +84,7 @@
         android:id="@+id/btnMin"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:onClick="onClickOperator"
+        android:onClick="onClickButton"
         android:text="@string/btnMin"
         android:textColorLink="@color/colorPrimary"
         android:textSize="36sp"
@@ -101,7 +101,7 @@
         android:textSize="30sp"
         app:layout_constraintStart_toEndOf="@+id/btn9"
         app:layout_constraintTop_toBottomOf="@+id/textViewIn"
-        android:onClick="onClickOperator"/>
+        android:onClick="onClickButton"/>
 
     <Button
         android:id="@+id/btnPl"
@@ -112,7 +112,7 @@
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/btn3"
         app:layout_constraintTop_toBottomOf="@+id/btnMn"
-        android:onClick="onClickOperator"/>
+        android:onClick="onClickButton"/>
 
     <Button
         android:id="@+id/btnMn"
@@ -123,7 +123,7 @@
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/btn6"
         app:layout_constraintTop_toBottomOf="@+id/btnDel"
-        android:onClick="onClickOperator"/>
+        android:onClick="onClickButton"/>
 
      <Button
         android:id="@+id/btnTchk"
@@ -135,7 +135,7 @@
         android:textSize="50sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn1"
-         android:onClick="onClickTchk" />
+         android:onClick="onClickButton" />
 
     <Button
         android:id="@+id/btnClear"
@@ -153,12 +153,13 @@
         android:id="@+id/btn0"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:onClick="onClickNumber"
+        android:onClick="onClickButton"
         android:text="@string/btn0"
         android:textColorLink="@color/colorPrimary"
         android:textSize="50sp"
         app:layout_constraintStart_toEndOf="@+id/btn7"
         app:layout_constraintTop_toBottomOf="@+id/btn2" />
+
     <Button
         android:id="@+id/btn1"
         android:layout_width="80dp"
@@ -169,19 +170,7 @@
         android:textSize="50sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn4"
-        android:onClick="onClickNumber"/>
-
-    <Button
-        android:id="@+id/btn3"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:text="@string/btn3"
-        android:textColorLink="@color/colorPrimary"
-        android:textSize="50sp"
-        app:layout_constraintStart_toEndOf="@+id/btn8"
-        app:layout_constraintTop_toBottomOf="@+id/btn6"
-        android:onClick="onClickNumber"/>
-
+        android:onClick="onClickButton"/>
     <Button
         android:id="@+id/btn2"
         android:layout_width="80dp"
@@ -191,7 +180,17 @@
         android:textSize="50sp"
         app:layout_constraintStart_toEndOf="@+id/btn7"
         app:layout_constraintTop_toBottomOf="@+id/btn5"
-        android:onClick="onClickNumber"/>
+        android:onClick="onClickButton"/>
+    <Button
+        android:id="@+id/btn3"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:text="@string/btn3"
+        android:textColorLink="@color/colorPrimary"
+        android:textSize="50sp"
+        app:layout_constraintStart_toEndOf="@+id/btn8"
+        app:layout_constraintTop_toBottomOf="@+id/btn6"
+        android:onClick="onClickButton"/>
 
     <Button
         android:id="@+id/btn4"
@@ -203,13 +202,13 @@
         android:textSize="50sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn7"
-        android:onClick="onClickNumber"/>
+        android:onClick="onClickButton"/>
 
     <Button
         android:id="@+id/btn5"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:onClick="onClickNumber"
+        android:onClick="onClickButton"
         android:text="@string/btn5"
         android:textColorLink="@color/colorPrimary"
         android:textSize="50sp"
@@ -220,7 +219,7 @@
         android:id="@+id/btn6"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:onClick="onClickNumber"
+        android:onClick="onClickButton"
         android:text="@string/btn6"
         android:textColorLink="@color/colorPrimary"
         android:textSize="50sp"
@@ -238,7 +237,7 @@
         android:textSize="50sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewIn"
-        android:onClick="onClickNumber"/>
+        android:onClick="onClickButton"/>
 
     <Button
         android:id="@+id/btn8"
@@ -250,7 +249,7 @@
         android:textSize="50sp"
         app:layout_constraintStart_toEndOf="@+id/btn7"
         app:layout_constraintTop_toBottomOf="@+id/textViewIn"
-        android:onClick="onClickNumber"/>
+        android:onClick="onClickButton"/>
 
     <Button
         android:id="@+id/btn9"
@@ -262,6 +261,6 @@
         android:textSize="50sp"
         app:layout_constraintStart_toEndOf="@+id/btn8"
         app:layout_constraintTop_toBottomOf="@+id/textViewIn"
-        android:onClick="onClickNumber"/>
+        android:onClick="onClickButton"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

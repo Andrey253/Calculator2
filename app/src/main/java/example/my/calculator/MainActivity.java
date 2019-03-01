@@ -7,14 +7,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Stack;
+
 
 public class MainActivity extends AppCompatActivity {
-    private TextView  resultScreen;                         // View  результата
-    private TextView  InScreen;                             // View вводимой формулы
-    private String resultText = "Здесь будет результат";    // Текс результата
-    public String InText="";             // Текст вводимой формулы
-    public boolean TchkHave = false;
-    private float subresult;// не могу перекоммитить 2
+    private TextView    resultScreen;                         // View  результата
+    private TextView    InScreen;                             // View вводимой формулы
+    private String      resultText = "";                      // Текс результата
+    public String       InText="";                            // Текст вводимой формулы
+    private float    subresult;                               // не могу перекоммитить 2
+    Stack<String>    stackOperator = new Stack<> ();          // Стек операций
+    Stack<Integer>   stackNumber =   new Stack<> ();          // Стек оперендов
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,19 +44,17 @@ public class MainActivity extends AppCompatActivity {
     public void onClickButton(View v){
         Button b = (Button) v;
 
-        if ( isOperator ( null,b ) &&  enableOperator ( InText,b)) InText +=  b.getText(); // Разрешение на ввод операторов
-        if ( lastCharIsNum((String) b.getText ()) && enableNum( InText,b)) InText +=  b.getText(); // Разрешение на ввод цифр
-        if ( b.getText ().equals ( "/" ) && enableDr ( InText,b ) ) InText +=  b.getText(); // Разрешение на ввод "-"
-        if ( b.getText ().equals ( "(" ) && enableSkOp ( InText,b ) ) InText +=  b.getText(); // Разрешение на ввод "("
-        if ( b.getText ().equals ( ")" ) && enableSkCl ( InText,b ) ) InText +=  b.getText(); // Разрешение на ввод ")"
-        if ( b.getText ().equals ( "." ) && enableTchk ( InText,b ) ) InText +=  b.getText(); // Разрешение на ввод "."
-        if ( b.getText ().equals ( "0" ) && lastChar ( InText ).equals ( "/" )
-         ||  b.getText ().equals ( "0" ) && lastChar ( InText ).equals ( "÷" )) InText += "0."; // Добавление  "." если "0" после дроби
-        if ( lastChar ( InText ).equals( ".")) TchkHave=true;
+        if ( isOperator ( null,b ) &&  enableOperator ( InText,b)) InText +=  b.getText();       // Разрешение на ввод операторов
+        if ( lastCharIsNum((String) b.getText ()) && enableNum( InText,b)) InText +=  b.getText();  // Разрешение на ввод цифр
+        if ( b.getText ().equals ( "/" ) && enableDr   ( InText,b ) ) InText +=  b.getText();         // Разрешение на ввод "-"
+        if ( b.getText ().equals ( "(" ) && enableSkOp ( InText,b ) ) InText +=  b.getText();       // Разрешение на ввод "("
+        if ( b.getText ().equals ( ")" ) && enableSkCl ( InText,b ) ) InText +=  b.getText();       // Разрешение на ввод ")"
+        if ( b.getText ().equals ( "." ) && enableTchk ( InText,b ) ) InText +=  b.getText();       // Разрешение на ввод "."
+        if ( b.getText ().equals ( "0" ) && lastChar   ( InText ).equals ( "/" )
+         ||  b.getText ().equals ( "0" ) && lastChar   ( InText ).equals ( "÷" )) InText += "0.";     // Добавление  "." если "0" после дроби
 
         updateIn();
     }
-
     public void onClickClear(View v){
         InText = "";
         updateIn();
@@ -78,7 +79,7 @@ public static boolean isOperator( String s,Button x)  // Проверка явл
         }
         return true;
     }
-/*    public static boolean lastCharIsNum(String str)  // Проверка является ли последний символ числом Аналог верхней функции
+/*    public static boolean lastCharIsNum(String str)  // Проверка является ли последний символ числом. Аналог верхней функции.
     {
         String x=lastChar ( str );
         if (x.equals ( "0" ) || x.equals ( "1" ) || x.equals ( "2" ) || x.equals ( "3" ) || x.equals ( "4" ) || x.equals ( "5" )
@@ -147,7 +148,7 @@ public static boolean enableMin(String str)                             // Minus
     public  boolean enableTchk(String str, Button btn)               // ПРазрешение на ввод точки "."
     {
         //  System.out.println("Длина  cstr "+ (str.length ()-1));
-        if (lastCharIsNum ( str ) && !TchkHave) return true;
+        if (lastCharIsNum ( str ) ) return true;
         return  false;
 
     }

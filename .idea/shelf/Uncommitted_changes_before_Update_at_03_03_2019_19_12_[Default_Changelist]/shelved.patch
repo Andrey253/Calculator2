@@ -1,0 +1,205 @@
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_1_7\" project-jdk-name=\"1.8\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision 12fbea3e45f975ab180f4d66f6082cb16f10fb7d)
++++ .idea/misc.xml	(date 1551615160278)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+Index: app/src/main/java/example/my/calculator/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package example.my.calculator;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.graphics.Paint;\r\nimport android.os.Bundle;\r\nimport android.os.Parcel;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.TextView;\r\n\r\nimport java.io.SyncFailedException;\r\nimport java.util.ArrayList;\r\nimport java.util.Stack;\r\n\r\n\r\npublic class MainActivity extends AppCompatActivity {\r\n    private TextView    resultScreen;                         // View  результата\r\n    private TextView    InScreen;                             // View вводимой формулы\r\n    private String      resultText = \"\";                      // Текс результата\r\n    public String       InText=\"\";                            // Текст вводимой формулы\r\n    private float    subresult;                               // не могу перекоммитить 2\r\n    public ArrayList<String> stackOperator =  new ArrayList<>();// Стек операций\r\n    public ArrayList<String> stackNumer = new ArrayList<>();// Стек оперендов\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate ( savedInstanceState );\r\n        setContentView ( R.layout.activity_main );\r\n        resultScreen = findViewById(R.id.textViewRes);// View  результата\r\n        InScreen = findViewById(R.id.textViewIn);     // View вводимой формулы\r\n        InScreen.setText(InText);\r\n    }\r\n    private void updateIn(){\r\n        //result();\r\n        InScreen.setText(InText);\r\n        resultScreen.setText(resultText);\r\n        resultText=\"\";\r\n\r\n    }\r\n    private void clear(){\r\n        InText = \"\";\r\n        subresult = 0;\r\n    }\r\n    public void onClickBack(View v){\r\n\r\n        InText =  InText.length () > 0 ? InText.substring(0, InText.length()-1) : \"\";\r\n        updateIn();\r\n    }\r\n    public void onClickButton(View v){\r\n        Button b = (Button) v;\r\n//        System.out.println(\"LOG вводимый символ = \"+b.getText ());\r\n//        if ( b.getText ().equals ( \"0\" ) && (lastSymbolString   ( InText ).equals ( \"/\" ) || lastSymbolString   ( InText ).equals ( \"÷\" )))\r\n//            InText += \"0.\";     // Добавление  \".\" если \"0\" после дроби\r\n        if ( IsNum      ((String) b.getText ()) && enableNum      ( InText,b)) {InText +=  b.getText(); }  // Разрешение на ввод цифр кроме \"0\"\r\n        if ( isOperator ((String) b.getText ()) && enableOperator ( InText,b))  {InText +=  b.getText(); }   // Разрешение на ввод операторов\r\n        if ( b.getText ().equals ( \"(\" ) && enableSkOp ( InText,b ) )  {InText +=  b.getText(); }        // Разрешение на ввод \"(\"\r\n        if ( b.getText ().equals ( \")\" ) && enableSkCl ( InText,b ) )  {InText +=  b.getText(); }        // Разрешение на ввод \")\"\r\n\r\n        greateStacks();\r\n        System.out.println(\"LOG stackNumer =\"+stackNumer);\r\n        System.out.println(\"LOG stackOperator =\"+stackOperator);\r\n        calculator();\r\n        updateIn();\r\n    }\r\n    public void onClickClear(View v){\r\n        double t=0.0;\r\n        InText = \"\";\r\n        updateIn();\r\n    }\r\n    public void setSubresult(float subresult) {\r\n        this.subresult = subresult;\r\n    }\r\n   //////////////************** Чем является символ\r\npublic static boolean isOperator( String s)  // Проверка является ли последний символ оператором\r\n{\r\n    char x;\r\n    x = s.charAt ( s.length ()-1 );\r\n    if ( x == '-' ||x == '+'  ||x == '÷' ||x == 'x' ||x  == '/')\r\n        return true;\r\n    return false;\r\n    }\r\n    public static boolean isOperatorLast( String s)  // Проверка является ли последний символ оператором\r\n    {\r\n        String g=lastSymbolString(s);\r\n        if (g.equals (\"-\") || g.equals ( \"÷\" ) || g.equals ( \"x\" ) || g.equals ( \"+\" )|| g.equals ( \"/\" )) return true;\r\n        return  false;\r\n    }\r\n/*    public static boolean IsNum(String str) { // Является ли последний введеный символ цифрой/числом кроме 0\r\n        if (str==\".\") return true;\r\n        try {\r\n            Integer.parseInt(str);\r\n        } catch (Exception e) {\r\n            return false;\r\n        }\r\n       return true;\r\n    }*/\r\n    public static boolean IsNum(String s)  // Проверка является ли последний символ числом. Аналог верхней функции.\r\n    {\r\n        if (s.length()<=0) return false;\r\n        try {\r\n            char x;\r\n            x = s.charAt ( s.length ()-1 );\r\n            if ( x == '0' ||x == '1'  ||x == '2' ||x == '3' ||x == '4' ||x == '5'\r\n                    ||x == '6' ||x == '7' ||x == '8' ||x == '9' ||x == '.' )\r\n                return true;\r\n        }catch (Exception r){\r\n            System.out.println(\"LOG out IsNum\");\r\n        }\r\n\r\n        return  false;\r\n    }\r\n//////////////************** Чем является символ\r\n\r\n////////////// ************* Проверка разрешения на ввод символа\r\npublic static boolean enableMin(String str)                             // Minus \"-\"\r\n{\r\n    char x;\r\n    x = str.charAt ( str.length ()-1 );\r\n    if ( x == ')' ||x == '.' || str.length ()==0 || IsNum ( str ))\r\n        return true;\r\n        return false;\r\n}\r\n    public static String lastSymbolString(String x)                     // Возвращает последний символ из строки или \"\" в формате String\r\n    {\r\n        if (x.length ()<=0) return \"\";\r\n        return String.valueOf(x.charAt ( x.length ()-1 ));\r\n    }\r\n\r\n    public static boolean enableNum(String str, Button b) // Разрешение на ввод цифр\r\n    {\r\n      //  if (str.length()<0) return false;\r\n        String x = lastSymbolString ( str );\r\n        if (x.equals ( \"(\" ) || x.equals ( \".\" ) || isOperatorLast(str) || x.equals ( \"\" ) || IsNum ( str ))\r\n        return true;\r\n        return false;\r\n    }\r\n    public static boolean enableDr(String str, Button b)        // Разрешение на ввод дроби\r\n    {\r\n        String x = lastSymbolString ( str );\r\n        if (x.equals ( \")\" ) || IsNum ( str ) )\r\n            return true;\r\n        return false;\r\n    }\r\n    public static boolean enableSkOp(String str, Button b)      // Разрешение на ввод открытой скобки \"(\"\r\n    {\r\n        String x = lastSymbolString ( str );\r\n        if (x.equals ( \"\" ) || x.equals ( \"-\" ) || x.equals ( \"+\" ) ||x.equals ( \"x\" ) ||x.equals ( \"÷\" ) ||x.equals ( \"(\" ))\r\n            return true;\r\n        return false;\r\n    }\r\n    public static boolean enableSkCl(String str, Button b)          // Разрешение на ввод закрытой скобки \")\"\r\n    {\r\n        String x = lastSymbolString ( str );\r\n        if (countSymbol (str,'(' ) > countSymbol (str,')' ))\r\n        if (x.equals ( \")\" ) || IsNum ( str ))\r\n            return true;\r\n        return false;\r\n    }\r\n    public static boolean enableOperator(String str, Button btn)  // Разрешение на ввод оператора\r\n    {\r\n        try {\r\n            if (lastSymbolString ( str ).equals ( \")\" ) || IsNum ( str )  || str.equals(\"\")) return true;\r\n        }catch (Exception r) {\r\n            System.out.println(\"LOG out enableOperator\");\r\n        }\r\n        return  false;\r\n\r\n    }\r\n    public  boolean enableTchk(String str, Button btn)               // ПРазрешение на ввод точки \".\"\r\n    {\r\n        //  System.out.println(\"Длина  cstr \"+ (str.length ()-1));\r\n        if (IsNum ( str ) ) return true;\r\n        return  false;\r\n\r\n    }\r\n    ////////////// ************* Проверка разрешения на ввод символа\r\n    ////////////// ************* Функция подчета числа фхождений needle в haystack\r\n    public static int countSymbol(String haystack, char needle)\r\n    {\r\n        int count = 0;\r\n        for (int i=0; i < haystack.length(); i++)\r\n        {\r\n            if (haystack.charAt(i) == needle)\r\n            {\r\n                count++;\r\n            }\r\n        }\r\n        return count;\r\n    }\r\n    ////////////// ************* Функция подчета числа фхождений needle в haystack\r\n    public int powerOperation(String pop){\r\n        switch(pop) {\r\n            case \"+\": return 2;\r\n            case \"-\": return 2;\r\n            case \"÷\": return 3;\r\n            case \"x\": return 3;\r\n            case \"/\": return 3;\r\n            default:  return 0;\r\n        }\r\n    }\r\n    public boolean inStackOper(String div){\r\n    if (powerOperation(div) != 0) return true;\r\n    return false;\r\n    }\r\n    public void greateStacks(){\r\n        int count = 0;\r\n        String numbers = \"\";\r\n        double numberD=0;\r\n        stackNumer.clear();\r\n        stackOperator.clear();\r\n        for (int i=0 ; i < InText.length(); i++)\r\n        {\r\n            if ( charIsOperator(InText,i) ) {       // Если оператор, то в Стек операторов\r\n                stackOperator.add(String.valueOf(InText.charAt(i)));//  то в Стек операторов\r\n                numbers=\"\";\r\n            }\r\n            if (charIsNum(InText,i)){\r\n                if (numbers.length()>0) stackNumer.remove(stackNumer.size()-1);\r\n                numbers+=InText.charAt(i); // если цифра, то собираем строку числа\r\n                stackNumer.add(numbers);\r\n            }\r\n        }\r\n    }\r\n    public boolean charIsOperator(String s, int i)  // Проверка является ли последний символ оператором\r\n    {\r\n        char c;\r\n        c = InText.charAt(i);\r\n        if (c=='-' || c=='÷' || c=='x' || c=='+' || c=='/' || c=='(' || c==')' ) return true;\r\n        return  false;\r\n    }\r\n    public boolean charIsNum(String s, int i)  // Проверка является ли последний символ оператором\r\n    {\r\n        char c;\r\n        c = InText.charAt(i);\r\n        if (c=='.' || c=='0' || c=='1' || c=='2' || c=='3' || c=='4' || c=='5' || c=='6' || c=='7'  || c=='8'  || c=='9' ) return true;\r\n        return  false;\r\n    }\r\n    public boolean charIsDigit(String s, int i)  // Проверка является ли последний символ цифрой\r\n    {\r\n        String c;\r\n        c = String.valueOf(InText.charAt(i));\r\n        if (IsNum(c)) {return true;}\r\n        return  false;\r\n    }\r\n    public String calcOperation (String s,String d1, String d2)  // Проверка является ли последний символ цифрой\r\n    {\r\n        double num1 = Double.valueOf(d1);\r\n        double num2 = Double.valueOf(d2);\r\n        if (s.equals(\"x\")) {System.out.println(\"LOG \"+num1+\"x\"+num2+\" = \"+(num1*num2)); return Double.toString(num1*num2);}\r\n        if (s.equals(\"-\")) {System.out.println(\"LOG \"+num1+\"-\"+num2+\" = \"+(num1-num2));return Double.toString(num1-num2);}\r\n        if (s.equals(\"/\")) {System.out.println(\"LOG \"+num1+\"/\"+num2+\" = \"+(num1/num2));if (num2!=0)return Double.toString(num1/num2); else return \"Деление на ноль\";}\r\n        if (s.equals(\"+\")) {System.out.println(\"LOG \"+num1+\"+\"+num2+\" = \"+(num1+num2));return Double.toString(num2+num1);}\r\n        if (s.equals(\"÷\")) {System.out.println(\"LOG \"+num1+\"÷\"+num2+\" = \"+(num1/num2));if (num2!=0)return Double.toString(num1/num2); else return \"Деление на ноль\";}\r\n        return \"calcOperation не подсчитан\";\r\n    }\r\n    public void calculator()  // Проверка является ли последний символ цифрой\r\n    {\r\n        String op1 = \"\";     String op2 = \"\";  String dig1=\"\"; String dig2=\"\";\r\n        double resDouble;\r\n        //String resString = \"TESTT\";\r\n        //resultScreen.setText(resString);\r\n        int sumSkOp=0; // Количество открытых скобок\r\n        if (stackNumer.size()==1) resultText =stackNumer.get(0);\r\n\r\n            while (stackOperator.size()!=0){\r\n                op1 = stackOperator.get(0);\r\n                stackOperator.remove(0);\r\n\r\n                if (op1.equals(\"(\")){ // If \"(\"\r\n                    sumSkOp++;\r\n                    continue;\r\n                 }\r\n                if (op1.equals(\")\")){\r\n                    while (op1.equals(\")\"))\r\n                    {   sumSkOp--;\r\n                        op1 = stackOperator.get(0);\r\n                        stackOperator.remove(0);\r\n                    }}\r\n                if (isOperator(op1)){\r\n                    try { dig1 = stackNumer.get(0);}\r\n                    catch (Exception e) { resultText =\"Ведите цифры\";}\r\n                    try { dig2 = stackNumer.get(1);\r\n                        stackNumer.set(0,calcOperation (op1, dig1,dig2));\r\n                        System.out.println(\"LOG получили от калькулятора = \"+calcOperation (op1, dig1,dig2));\r\n                        stackNumer.remove(1);\r\n                        resultText =stackNumer.get(0);\r\n                        System.out.println(\"LOG stackNumer = \"+stackNumer);\r\n                        System.out.println(\"LOG stackOperator = \"+stackOperator);\r\n                    }\r\n                    catch (Exception e) { resultText =\"Выражение не завершено\";}\r\n                }\r\n//                if (isOperator(op1)){resultScreen.setText(Double.toString(calcOperation(op1,dig1,dig2)));\r\n//                        resultScreen.setText(\"Пустой стек операций\");}\r\n\r\n            } // while\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/example/my/calculator/MainActivity.java	(revision 12fbea3e45f975ab180f4d66f6082cb16f10fb7d)
++++ app/src/main/java/example/my/calculator/MainActivity.java	(date 1551614091599)
+@@ -2,15 +2,11 @@
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ 
+-import android.graphics.Paint;
+ import android.os.Bundle;
+-import android.os.Parcel;
+ import android.view.View;
+ import android.widget.Button;
+ import android.widget.TextView;
+ 
+-import java.io.SyncFailedException;
+-import java.util.ArrayList;
+ import java.util.Stack;
+ 
+ 
+@@ -20,8 +16,8 @@
+     private String      resultText = "";                      // Текс результата
+     public String       InText="";                            // Текст вводимой формулы
+     private float    subresult;                               // не могу перекоммитить 2
+-    public ArrayList<String> stackOperator =  new ArrayList<>();// Стек операций
+-    public ArrayList<String> stackNumer = new ArrayList<>();// Стек оперендов
++    public Stack<Character> stackOperator =  new Stack<Character>();// Стек операций
++    public Stack<String> stackNumer = new Stack<>();// Стек оперендов
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+@@ -35,7 +31,7 @@
+         //result();
+         InScreen.setText(InText);
+         resultScreen.setText(resultText);
+-        resultText="";
++        //resultText="";
+ 
+     }
+     private void clear(){
+@@ -45,6 +41,7 @@
+     public void onClickBack(View v){
+ 
+         InText =  InText.length () > 0 ? InText.substring(0, InText.length()-1) : "";
++
+         updateIn();
+     }
+     public void onClickButton(View v){
+@@ -60,7 +57,6 @@
+         greateStacks();
+         System.out.println("LOG stackNumer ="+stackNumer);
+         System.out.println("LOG stackOperator ="+stackOperator);
+-        calculator();
+         updateIn();
+     }
+     public void onClickClear(View v){
+@@ -189,19 +185,24 @@
+         return count;
+     }
+     ////////////// ************* Функция подчета числа фхождений needle в haystack
+-    public int powerOperation(String pop){
+-        switch(pop) {
+-            case "+": return 2;
+-            case "-": return 2;
+-            case "÷": return 3;
+-            case "x": return 3;
+-            case "/": return 3;
+-            default:  return 0;
++    public boolean powerOperation(char fop1, char fop2){
++        int f1 = 0; int f2=0;
++        switch(fop1) {
++            case '+': f1=2;
++            case '-': f1=2;
++            case '÷': f1=3;
++            case 'x': f1=3;
++            case '/': f1=3;
+         }
+-    }
+-    public boolean inStackOper(String div){
+-    if (powerOperation(div) != 0) return true;
+-    return false;
++        switch(fop2) {
++            case '+': f2=2;
++            case '-': f2=2;
++            case '÷': f2=3;
++            case 'x': f2=3;
++            case '/': f2=3;
++        }
++        if (f1>f2) return true;
++        return false;
+     }
+     public void greateStacks(){
+         int count = 0;
+@@ -212,14 +213,17 @@
+         for (int i=0 ; i < InText.length(); i++)
+         {
+             if ( charIsOperator(InText,i) ) {       // Если оператор, то в Стек операторов
+-                stackOperator.add(String.valueOf(InText.charAt(i)));//  то в Стек операторов
++                stackOperator.push(InText.charAt(i));//  то в Стек операторов
+                 numbers="";
+-            }
+-            if (charIsNum(InText,i)){
+-                if (numbers.length()>0) stackNumer.remove(stackNumer.size()-1);
+-                numbers+=InText.charAt(i); // если цифра, то собираем строку числа
+-                stackNumer.add(numbers);
++            } else  if (charIsNum(InText,i)){
++                numbers+=InText.charAt(i);
++                while (i<(InText.length()-1) && charIsNum(InText,i+1)){
++                    numbers+=InText.charAt(i+1); // если цифра, то собираем строку числа
++                    i++;
++                }
++                stackNumer.push(numbers);
+             }
++            calculator();
+         }
+     }
+     public boolean charIsOperator(String s, int i)  // Проверка является ли последний символ оператором
+@@ -243,29 +247,44 @@
+         if (IsNum(c)) {return true;}
+         return  false;
+     }
+-    public String calcOperation (String s,String d1, String d2)  // Проверка является ли последний символ цифрой
++    public String calcOperation (char s,String d1, String d2)  // Проверка является ли последний символ цифрой
+     {
+         double num1 = Double.valueOf(d1);
+         double num2 = Double.valueOf(d2);
+-        if (s.equals("x")) {System.out.println("LOG "+num1+"x"+num2+" = "+(num1*num2)); return Double.toString(num1*num2);}
+-        if (s.equals("-")) {System.out.println("LOG "+num1+"-"+num2+" = "+(num1-num2));return Double.toString(num1-num2);}
+-        if (s.equals("/")) {System.out.println("LOG "+num1+"/"+num2+" = "+(num1/num2));if (num2!=0)return Double.toString(num1/num2); else return "Деление на ноль";}
+-        if (s.equals("+")) {System.out.println("LOG "+num1+"+"+num2+" = "+(num1+num2));return Double.toString(num2+num1);}
+-        if (s.equals("÷")) {System.out.println("LOG "+num1+"÷"+num2+" = "+(num1/num2));if (num2!=0)return Double.toString(num1/num2); else return "Деление на ноль";}
++        if (s=='x') {System.out.println("LOG "+num1+"x"+num2+" = "+(num1*num2)); return Double.toString(num1*num2);}
++        if (s=='-') {System.out.println("LOG "+num1+"-"+num2+" = "+(num1-num2));return Double.toString(num1-num2);}
++        if (s=='/') {System.out.println("LOG "+num1+"/"+num2+" = "+(num1/num2));if (num2!=0)return Double.toString(num1/num2); else return "Деление на ноль";}
++        if (s=='+') {System.out.println("LOG "+num1+"+"+num2+" = "+(num1+num2));return Double.toString(num2+num1);}
++        if (s=='÷') {System.out.println("LOG "+num1+"÷"+num2+" = "+(num1/num2));if (num2!=0)return Double.toString(num1/num2); else return "Деление на ноль";}
+         return "calcOperation не подсчитан";
+     }
+     public void calculator()  // Проверка является ли последний символ цифрой
+     {
+-        String op1 = "";     String op2 = "";  String dig1=""; String dig2="";
++        char op1 = '0';     char op2 = '0';  String dig1=""; String dig2="";
+         double resDouble;
+-        //String resString = "TESTT";
+-        //resultScreen.setText(resString);
++        int i=0;
+         int sumSkOp=0; // Количество открытых скобок
+-        if (stackNumer.size()==1) resultText =stackNumer.get(0);
+-
++        if (stackNumer.size()==1) resultText =stackNumer.peek();
++        if (stackNumer.size()>1 && stackOperator.size()<=1){
++            op2 = stackOperator.pop();
++            dig2 = stackNumer.pop();
++            dig1 = stackNumer.pop();
++            if (stackOperator.empty()) {
++                    stackNumer.push(calcOperation(op2, dig1,dig2));
++                    resultText =stackNumer.peek();
++            }
++/*
++else if (stackOperator.size()<=1)
++            if (powerOperation(op1,op2)){
++                stackNumer.push(calcOperation(op1, dig1,dig2));
++                resultText =stackNumer.peek();
++            }
++*/
++        }
++/*
+             while (stackOperator.size()!=0){
+-                op1 = stackOperator.get(0);
+-                stackOperator.remove(0);
++                op1 = stackOperator.get(i);
++                stackOperator.remove(i);
+ 
+                 if (op1.equals("(")){ // If "("
+                     sumSkOp++;
+@@ -293,6 +312,6 @@
+ //                if (isOperator(op1)){resultScreen.setText(Double.toString(calcOperation(op1,dig1,dig2)));
+ //                        resultScreen.setText("Пустой стек операций");}
+ 
+-            } // while
++            } // while*/
+     }
+ }

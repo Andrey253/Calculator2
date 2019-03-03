@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
         if ( b.getText ().equals ( ")" ) && enableSkCl ( InText,b ) )  {InText +=  b.getText(); }        // Разрешение на ввод ")"
 
         greateStacks();
-        System.out.println("LOG stackNumer ="+stackNumer);
-        System.out.println("LOG stackOperator ="+stackOperator);
+        System.out.println("LOG onClickButton stackNumer ="+stackNumer);
+        System.out.println("LOG onClickButton stackOperator ="+stackOperator);
         calculator();
         updateIn();
     }
@@ -189,20 +189,26 @@ public static boolean enableMin(String str)                             // Minus
         return count;
     }
     ////////////// ************* Функция подчета числа фхождений needle в haystack
-    public int powerOperation(String pop){
-        switch(pop) {
-            case "+": return 2;
-            case "-": return 2;
-            case "÷": return 3;
-            case "x": return 3;
-            case "/": return 3;
-            default:  return 0;
+    public boolean powerOperation(char fop1, char fop2){
+        int f1 = 0; int f2=0;
+        switch(fop1) {
+            case '+': f1=2;
+            case '-': f1=2;
+            case '÷': f1=3;
+            case 'x': f1=3;
+            case '/': f1=3;
         }
+        switch(fop2) {
+            case '+': f2=2;
+            case '-': f2=2;
+            case '÷': f2=3;
+            case 'x': f2=3;
+            case '/': f2=3;
+        }
+        if (f1>f2) return true;
+        return false;
     }
-    public boolean inStackOper(String div){
-    if (powerOperation(div) != 0) return true;
-    return false;
-    }
+
     public void greateStacks(){
         int count = 0;
         String numbers = "";
@@ -258,26 +264,38 @@ public static boolean enableMin(String str)                             // Minus
     {
         String op1 = "";     String op2 = "";  String dig1=""; String dig2="";
         double resDouble;
-        //String resString = "TESTT";
-        //resultScreen.setText(resString);
+        int i = 0;
         int sumSkOp=0; // Количество открытых скобок
         if (stackNumer.size()==1) resultText =stackNumer.get(0);
 
-            while (stackOperator.size()!=0){
-                op1 = stackOperator.get(0);
-                stackOperator.remove(0);
+            while (stackOperator.size()>(i+sumSkOp)){
+                op1 = stackOperator.get(i+sumSkOp);
+                System.out.println("LOG op1 in Input "+op1);
+                System.out.println("LOG stackOperator.size() "+stackOperator.size());
 
-                if (op1.equals("(")){ // If "("
+                if (op1.equals(")")){ // If "("
                     sumSkOp++;
-                    continue;
+                   break;
                  }
-                if (op1.equals(")")){
-                    while (op1.equals(")"))
-                    {   sumSkOp--;
-                        op1 = stackOperator.get(0);
-                        stackOperator.remove(0);
-                    }}
-                if (isOperator(op1)){
+                System.out.println("LOG i = " +i+ "     sumSkOp = "+sumSkOp+"(i+sumSkOp) = "+(i+sumSkOp));
+                if (isOperator(stackOperator.get(i+sumSkOp))){
+                    System.out.println("LOG Удаляем оператор "+stackOperator.get(i+sumSkOp));
+                    stackOperator.remove(i+sumSkOp);}
+
+                if (stackOperator.get(i+sumSkOp).equals("("))
+                {   System.out.println("LOG закрытая скобка");
+                    try {
+                        System.out.println("LOG удаляем stackOperator 0-     "+stackOperator.get(i+sumSkOp));
+                        stackOperator.remove(i+sumSkOp);
+                        System.out.println("LOG удаляем stackOperator 0-    "+stackOperator.get(i+sumSkOp));
+                        stackOperator.remove(i+sumSkOp);
+                    } catch (Exception e) {
+                        System.out.println("LOG ошибка удаленния скобок");
+                        System.out.println("LOG stackOperator после удаления "+stackOperator);
+                    }
+                    sumSkOp--;
+                } /////////////////////if
+                /*if (isOperator(op1)){
                     try { dig1 = stackNumer.get(0);}
                     catch (Exception e) { resultText ="Ведите цифры";}
                     try { dig2 = stackNumer.get(1);
@@ -285,14 +303,18 @@ public static boolean enableMin(String str)                             // Minus
                         System.out.println("LOG получили от калькулятора = "+calcOperation (op1, dig1,dig2));
                         stackNumer.remove(1);
                         resultText =stackNumer.get(0);
-                        System.out.println("LOG stackNumer = "+stackNumer);
-                        System.out.println("LOG stackOperator = "+stackOperator);
+                        System.out.println("LOG stackNumer в калькуляторе= "+stackNumer);
+                        System.out.println("LOG stackOperator в калькуляторе= "+stackOperator);
                     }
-                    catch (Exception e) { resultText ="Выражение не завершено";}
-                }
+                    catch (Exception e) { resultText =stackNumer.get(0);}
+                }*/
 //                if (isOperator(op1)){resultScreen.setText(Double.toString(calcOperation(op1,dig1,dig2)));
 //                        resultScreen.setText("Пустой стек операций");}
 
-            } // w
+//                System.out.println("LOG калькулятор на выходе ="+stackNumer);
+                System.out.println("LOG калькулятор на выходе ="+stackOperator);
+                i++;
+              //  System.out.println("LOG iiiiiiiiii ="+i);
+            } // while
     }
 }

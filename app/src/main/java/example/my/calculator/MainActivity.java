@@ -293,6 +293,6 @@ public static boolean enableMin(String str)                             // Minus
 //                if (isOperator(op1)){resultScreen.setText(Double.toString(calcOperation(op1,dig1,dig2)));
 //                        resultScreen.setText("Пустой стек операций");}
 
-            } // while
+            } // w
     }
 }

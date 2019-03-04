@@ -286,6 +286,8 @@ public static boolean enableMin(String str)                             // Minus
                 {   System.out.println("LOG закрытая скобка");
                     try {
                         System.out.println("LOG удаляем stackOperator 0-     "+stackOperator.get(i+sumSkOp));
+                        System.out.println("LOG с индексом-     "+(i+sumSkOp));
+                        System.out.println("LOG а на самом деле индекс )-     "+stackOperator.lastIndexOf(")"));
                         stackOperator.remove(i+sumSkOp);
                         System.out.println("LOG удаляем stackOperator 0-    "+stackOperator.get(i+sumSkOp));
                         stackOperator.remove(i+sumSkOp);

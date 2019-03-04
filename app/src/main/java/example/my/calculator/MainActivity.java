@@ -51,9 +51,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onClickButton(View v){
         Button b = (Button) v;
-//        System.out.println("LOG вводимый символ = "+b.getText ());
-//        if ( b.getText ().equals ( "0" ) && (lastSymbolString   ( InText ).equals ( "/" ) || lastSymbolString   ( InText ).equals ( "÷" )))
-//            InText += "0.";     // Добавление  "." если "0" после дроби
         if ( IsNum      ((String) b.getText ()) && enableNum      ( InText,b)) {InText +=  b.getText(); }  // Разрешение на ввод цифр кроме "0"
         if ( isOperator ((String) b.getText ()) && enableOperator ( InText,b))  {InText +=  b.getText(); }   // Разрешение на ввод операторов
         if ( b.getText ().equals ( "(" ) && enableSkOp ( InText,b ) )  {InText +=  b.getText(); }        // Разрешение на ввод "("
@@ -77,41 +74,13 @@ public class MainActivity extends AppCompatActivity {
                 if (numbers.length()>0) stackNumer.pop ();
                 numbers+=InText.charAt(i); // если цифра, то собираем строку числа
                 stackNumer.push (numbers);
-                System.out.println ("LOG stackNumer.size ()= "+stackNumer.size ());
-
-                if (countOper ( InText )==1 && stackNumer.size ()==2) {// Если оператор в строке один то выполняем его/////////////////// если один оператор в строке
-                    try {
-                        System.out.println ( "LOG если число операторов = 1 " + countOper ( InText ) );
-                        resultText = calcOperation ( stackOperator.peek () , stackNumer.pop () , stackNumer.pop () );
-                    } catch ( Exception e ) {
-                        System.out.println ( "LOG если число операторов = 1 ОШИБКА" );
-                        System.out.println ( "LOG stackNumer" + stackNumer );
-                    }
-                } /////////////////// если один оператор в строке
-            }
-            if (InText.charAt(i)==')'){      ///////////////  Удаляем двойные скобки
-                try {
-                    if (stackOperator.peek ()=='(') stackOperator.pop (); //Удаляем парные скобки которые вместе
-                    else stackOperator.push ( InText.charAt(i) );
-                } catch (Exception e) {}continue;
-            }                                ///////////////  Удаляем двойные скобки
-            if ( charIsOperator ( InText , i ) ) {       // Если оператор, то в Стек операторов
-                try {
-                    if ( powerOperation ( InText.charAt ( i ) , stackOperator.peek () ) ) {
-                        stackNumer.push ( calcOperation ( InText.charAt ( i ) , stackNumer.pop () , stackNumer.pop () ) );
-                        System.out.println ( "LOG если на входе оператор " );
-                    }
-                } catch ( Exception e ) {
-                }
+             }
+            if ( charIsOperator ( InText , i ) ) {       /////////////// Если оператор, то в Стек операторов
                 stackOperator.push ( InText.charAt ( i ) );//  то в Стек операторов
                 numbers = "";
-            }
-
-            try { resultText = stackNumer.peek () ;} catch (Exception e) {}
-
+            }                                           //**************** Если оператор, то в Стек операторов
+            resultText=calculator();
         }
-    }
-    public void calculator(){
 
     }
     public void onClickClear(View v){
@@ -128,6 +97,12 @@ public static boolean isOperator( String s)  // Проверка являетс�
     char x;
     x = s.charAt ( s.length ()-1 );
     if ( x == '-' ||x == '+'  ||x == '÷' ||x == 'x' ||x  == '/')
+        return true;
+    return false;
+    }
+public static boolean isOperatorChar( char s)  // Проверка является ли последний символ оператором
+{
+    if ( s == '-' ||s == '+'  ||s == '÷' ||s == 'x' ||s  == '/')
         return true;
     return false;
     }
@@ -271,21 +246,15 @@ public static boolean enableMin(String str)                             // Minus
     }*/
     public boolean powerOperation(char fop1, char fop2){
         int f1 = 0; int f2=0;
-        switch(fop1) {
-            case '+': f1=2;
-            case '-': f1=2;
-            case '÷': f1=3;
-            case 'x': f1=3;
-            case '/': f1=3;
-        }
-        switch(fop2) {
-            case '+': f2=2;
-            case '-': f2=2;
-            case '÷': f2=3;
-            case 'x': f2=3;
-            case '/': f2=3;
-        }
-        if (f1>f2) return true;
+        if (fop1=='+' || fop1=='-'  ) f1=2;
+        if (fop1=='÷' || fop1=='x' || fop1=='/'  ) f1=3;
+        if (fop2=='+' || fop2=='-'  ) f2=2;
+        if (fop2=='÷' || fop2=='x' || fop2=='/'  ) f2=3;
+
+/*        System.out.println("LOG powerOperation f1=  "+f1);
+        System.out.println("LOG powerOperation f2=  "+f2);*/
+        if (f1<=f2)
+            return true;
         return false;
     }
         public boolean charIsOperator(String s, int i)  // Проверка является ли последний символ оператором
@@ -313,69 +282,89 @@ public static boolean enableMin(String str)                             // Minus
     {
         double num1 = Double.valueOf(d1);
         double num2 = Double.valueOf(d2);
-        if (s=='x') {System.out.println("LOG "+num1+"x"+num2+" = "+(num1*num2)); return Double.toString(num1*num2);}
-        if (s=='-') {System.out.println("LOG "+num1+"-"+num2+" = "+(num1-num2));return Double.toString(num1-num2);}
-        if (s=='/') {System.out.println("LOG "+num1+"/"+num2+" = "+(num1/num2));if (num2!=0)return Double.toString(num1/num2); else return "Деление на ноль";}
-        if (s=='+') {System.out.println("LOG "+num1+"+"+num2+" = "+(num1+num2));return Double.toString(num2+num1);}
-        if (s=='÷') {System.out.println("LOG "+num1+"÷"+num2+" = "+(num1/num2));if (num2!=0)return Double.toString(num1/num2); else return "Деление на ноль";}
+        if (s=='x') return Double.toString(num1*num2);
+        if (s=='-') return Double.toString(num1-num2);
+        if (s=='/') if (num2!=0)return Double.toString(num1/num2); else return "Деление на ноль";
+        if (s=='+') return Double.toString(num2+num1);
+        if (s=='÷') if (num2!=0)return Double.toString(num1/num2); else return "Деление на ноль";
         return "calcOperation не подсчитан";
     }
-   /* public void calculator()  // Проверка является ли последний символ цифрой
+    public String calculator()  // Проверка является ли последний символ цифрой
     {
-        String op1 = "";     String op2 = "";
-        String dig1=""; String dig2="";
+        char op1 = ' ';
+        char op2 = ' ';
+        String dig1 = "";
+        String dig2 = "";
         int i = 0;
-        if (stackNumer.size()==1) resultText =stackNumer.get(0);
-        System.out.println("LOG  на вхаде калькулятора (i+sumSkOp) =     "+(i+sumSkOp));
-            while (stackOperator.size()>0 && Collections.frequency(stackOperator, "(")==Collections.frequency(stackOperator, ")")){
-                op1 = stackOperator.get(i+sumSkOp);
-                if (isOperator(op1)){
-                    try {
-                        op2=stackOperator.get(i+sumSkOp+1);
-                    } catch (Exception e) {
-                        System.out.println("LOG Второго оператора нет в Стеке");
-                    }
-                    if (powerOperation (op1,op2)){// Если надо, выполняем операцию, удаляем вторую запись из стека чисел и записываем в первое значение
-                        calcOperation ( op1,dig1, dig2 );
-                    }
-                    try {
-                        stackOperator.remove(i+sumSkOp);
-                        System.out.println("LOG Удаляем оператор = "+stackOperator);
-                    } catch (Exception e) {
-                        System.out.println("LOG Ошибка удаления stackOperator "+stackOperator.get(i+sumSkOp));
-                    }
-                    continue;
+        try {
+            if (stackOperator.peek() == '(') return stackNumer.peek();// Не чго считать
+        } catch (Exception e) {
+            return "Не чего считать";
+        }//***********************************************************// Не чго считать
+        try {
+            op1=stackOperator.pop();
+            if(op1==')'){
+                System.out.println("LOG Встретили )  ");
+                if(stackOperator.peek()=='('){
+                    System.out.println("LOG Затем встретили (  ");
+                    stackOperator.pop();
+                    return stackNumer.peek();
                 }
-
-                stackOperator.clear ();
-                *//*if (stackOperator.get(i+sumSkOp).equals("(") ){ // If "("
-
-                    if (stackOperator.size()>(i+sumSkOp+1)){
-                        if (stackOperator.get(i+sumSkOp+1).equals ( ")" )){
-                            System.out.println("LOG удаляем (    "+stackOperator.get(i+sumSkOp+1));
-                            System.out.println("LOG удаляем )    "+stackOperator.get(i+sumSkOp));
-                            stackOperator.remove(i+sumSkOp+1);
-                            stackOperator.remove(i+sumSkOp);
-                            sumSkOp--;
-                            continue;
-                        }}
-                    sumSkOp++;
-                    System.out.println("LOG количество ковычек (  = "+sumSkOp);
-                    continue;
-                 }
-                System.out.println("LOG i = " +i+ "     sumSkOp = "+sumSkOp);
-                if (stackOperator.size()>(i+sumSkOp))
-                if (isOperator(stackOperator.get(i+sumSkOp))){
-                    try {
-                        stackOperator.remove(i+sumSkOp);
-                        System.out.println("LOG Удаляем оператор = "+stackOperator);
-                        if (stackOperator.size()==0) break;
-                    } catch (Exception e) {
-                        System.out.println("LOG Ошибка удаления stackOperator "+stackOperator.get(i+sumSkOp));
-                    }continue;
+                else {
+                    System.out.println("LOG после ) stackOperator ДО подсчета ) "+stackOperator);
+                    stackNumer.push(calcOperation(stackOperator.pop(),stackNumer.pop(),stackNumer.pop())); // расчитываем и записываем в стек
+                    if (stackOperator.peek()=='(')// если забрали оператор а дальше "(", то не ложим обратно ")" и удаляем "("
+                    {
+                        stackOperator.pop();
                     }
-                System.out.println("LOG калькулятор на выходе ="+stackOperator);
-                System.out.println("LOG калькулятор на выходе  sumSkOp = "+sumSkOp);*//*
-            } // while
-    }*/
+                    else {
+                        stackOperator.push(')');
+                    }
+                    System.out.println("LOG после ) stackOperator ПОСЛЕ подсчета )  "+stackOperator);
+                    }return stackNumer.peek();
+            }
+            if (isOperatorChar(op1)){// Сделали op1=stackOperator.pop();
+                    if (!stackOperator.empty()) {
+                        op2 = stackOperator.pop();// Вытащили две операции
+                        System.out.println("LOG op2= "+op2);
+                        if (isOperatorChar(op2)){System.out.println("LOG Второй тоже оператор");
+                            System.out.println("LOG powerOperation(op1,op2) =   "+powerOperation(op1,op2));
+                            if (powerOperation(op1,op2)){
+                                if (stackNumer.size()>=2){
+                                    stackNumer.push(calcOperation(op2,stackNumer.pop(),stackNumer.pop()));
+                                    stackOperator.push(op1);
+                                }
+                                else {
+                                    stackOperator.push(op2);
+                                    stackOperator.push(op1);
+                                    return "Недостаточно цифр для подсчета";
+                                }
+
+                            return stackNumer.peek();
+                        }else {stackOperator.push(op2);
+                                stackOperator.push(op1);}
+                        } else {stackOperator.push(op2);
+                                stackOperator.push(op1);}
+                    }
+                    else if (stackNumer.size()>=2){//А если в стеке только одна операция была
+                        stackOperator.push(op1);
+                        dig1=stackNumer.pop();
+                        resultText= calcOperation(op1,dig1,stackNumer.peek());
+                        stackNumer.push(dig1);
+                        return resultText;
+                    }
+                    else {
+
+                        stackOperator.push(op1);
+                        return "Скорее всего не достаточно чисел";
+                    }
+              }//if (isOperatorChar(op1)) END
+            else stackOperator.push(op1);
+        } catch (Exception e) {
+            return "если нет в стеке операторов";
+        }
+        System.out.println("LOG на выходе кальк stackNumer ="+stackNumer);
+        System.out.println("LOG на выходе кальк stackOperator ="+stackOperator);
+        return stackNumer.peek()+" на выходе кальк";
+    }
 }

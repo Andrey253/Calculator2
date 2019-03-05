@@ -1,0 +1,16 @@
+Index: app/src/main/java/example/my/calculator/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/example/my/calculator/MainActivity.java	(date 1551798312000)
++++ app/src/main/java/example/my/calculator/MainActivity.java	(date 1551798539836)
+@@ -388,7 +388,7 @@
+             }
+ 
+         }
+-        ///////// Тлько операторы работают
++        ///////// Тлько операторы работают /8/////////////
+         ///////// Если конец строки, то завершаем операции
+         System.out.println ( "LOG конец строки STAK = " + STAK );
+         ///////// Если конец строки, то завершаем операции

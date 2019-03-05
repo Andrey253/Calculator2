@@ -388,6 +388,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+        ///////// Тлько операторы работают
         ///////// Если конец строки, то завершаем операции
         System.out.println ( "LOG конец строки STAK = " + STAK );
         ///////// Если конец строки, то завершаем операции

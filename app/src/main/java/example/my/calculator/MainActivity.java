@@ -299,8 +299,9 @@ public static boolean enableMin(String str)                             // Minus
         try {
             if (stackOperator.peek() == '(') return stackNumer.peek();// Не чго считать
         } catch (Exception e) {
-            return "Не чего считать";
+            return "Не чего считать на входе ( или операторов нет";
         }//***********************************************************// Не чго считать
+        if (!isOperatorLast(InText))
         try {
             op1=stackOperator.pop();
             if(op1==')'){
@@ -323,30 +324,43 @@ public static boolean enableMin(String str)                             // Minus
                     System.out.println("LOG после ) stackOperator ПОСЛЕ подсчета )  "+stackOperator);
                     }return stackNumer.peek();
             }
-            if (isOperatorChar(op1)){// Сделали op1=stackOperator.pop();
+            while (isOperatorChar(op1)){// Сделали op1=stackOperator.pop();
                     if (!stackOperator.empty()) {
                         op2 = stackOperator.pop();// Вытащили две операции
-                        System.out.println("LOG op2= "+op2);
-                        if (isOperatorChar(op2)){System.out.println("LOG Второй тоже оператор");
-                            System.out.println("LOG powerOperation(op1,op2) =   "+powerOperation(op1,op2));
-                            if (powerOperation(op1,op2)){
-                                if (stackNumer.size()>=2){
-                                    stackNumer.push(calcOperation(op2,stackNumer.pop(),stackNumer.pop()));
-                                    stackOperator.push(op1);
-                                }
-                                else {
+                        if (isOperatorChar(op2))
+                        {
+                            if (stackOperator.empty() && stackNumer.size()>=2)
+                            { // Если стек операций пустой
+                                stackNumer.push(calcOperation(op2,stackNumer.pop(),stackNumer.pop()));
+                                stackOperator.push(op1);
+                            }
+                            else
+                            if (powerOperation(op1,op2))
+                                {
+                                if (stackNumer.size()>=2)
+                                    {stackNumer.push(calcOperation(op2,stackNumer.pop(),stackNumer.pop()));
+                                     stackOperator.push(op1);
+                                    }
+                                else{
                                     stackOperator.push(op2);
                                     stackOperator.push(op1);
                                     return "Недостаточно цифр для подсчета";
+                                    }
+                                    return stackNumer.peek();
                                 }
-
-                            return stackNumer.peek();
-                        }else {stackOperator.push(op2);
-                                stackOperator.push(op1);}
-                        } else {stackOperator.push(op2);
-                                stackOperator.push(op1);}
-                    }
-                    else if (stackNumer.size()>=2){//А если в стеке только одна операция была
+                                else
+                                    {
+                                        stackOperator.push(op2);
+                                        stackOperator.push(op1);
+                                        return stackNumer.peek();
+                                    }
+                        } else {
+                                stackOperator.push(op2);
+                                stackOperator.push(op1);
+                                return stackNumer.peek();
+                                }
+                    } ////////////// WHILE
+                        if (stackNumer.size()>=2){//А если в стеке только одна операция была
                         stackOperator.push(op1);
                         dig1=stackNumer.pop();
                         resultText= calcOperation(op1,dig1,stackNumer.peek());
@@ -359,8 +373,7 @@ public static boolean enableMin(String str)                             // Minus
                         return "Скорее всего не достаточно чисел";
                     }
               }//if (isOperatorChar(op1)) END
-            else stackOperator.push(op1);
-        } catch (Exception e) {
+            } catch (Exception e) {
             return "если нет в стеке операторов";
         }
         System.out.println("LOG на выходе кальк stackNumer ="+stackNumer);

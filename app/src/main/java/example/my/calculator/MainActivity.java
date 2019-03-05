@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         greateStacks();
         System.out.println("LOG onClickButton stackNumer ="+stackNumer);
         System.out.println("LOG onClickButton stackOperator ="+stackOperator);
-       // calculator();
         updateIn();
     }
     public void greateStacks(){
@@ -74,12 +73,15 @@ public class MainActivity extends AppCompatActivity {
                 if (numbers.length()>0) stackNumer.pop ();
                 numbers+=InText.charAt(i); // если цифра, то собираем строку числа
                 stackNumer.push (numbers);
+                resultText=calculator();
              }
             if ( charIsOperator ( InText , i ) ) {       /////////////// Если оператор, то в Стек операторов
                 stackOperator.push ( InText.charAt ( i ) );//  то в Стек операторов
                 numbers = "";
+               // System.out.println ("LOG вызываем калькулятор");
+
             }                                           //**************** Если оператор, то в Стек операторов
-            resultText=calculator();
+
         }
 
     }
@@ -301,83 +303,65 @@ public static boolean enableMin(String str)                             // Minus
         } catch (Exception e) {
             return "Не чего считать на входе ( или операторов нет";
         }//***********************************************************// Не чго считать
-        if (!isOperatorLast(InText))
+        System.out.println("LOG stackNumer.на входе калькулятора = "+stackNumer);
+        System.out.println("LOG stackOperator.на входе калькулятора = "+stackOperator);
         try {
-            op1=stackOperator.pop();
-            if(op1==')'){
-                System.out.println("LOG Встретили )  ");
-                if(stackOperator.peek()=='('){
-                    System.out.println("LOG Затем встретили (  ");
-                    stackOperator.pop();
-                    return stackNumer.peek();
-                }
-                else {
-                    System.out.println("LOG после ) stackOperator ДО подсчета ) "+stackOperator);
-                    stackNumer.push(calcOperation(stackOperator.pop(),stackNumer.pop(),stackNumer.pop())); // расчитываем и записываем в стек
-                    if (stackOperator.peek()=='(')// если забрали оператор а дальше "(", то не ложим обратно ")" и удаляем "("
-                    {
-                        stackOperator.pop();
-                    }
-                    else {
-                        stackOperator.push(')');
-                    }
-                    System.out.println("LOG после ) stackOperator ПОСЛЕ подсчета )  "+stackOperator);
-                    }return stackNumer.peek();
-            }
-            while (isOperatorChar(op1)){// Сделали op1=stackOperator.pop();
-                    if (!stackOperator.empty()) {
-                        op2 = stackOperator.pop();// Вытащили две операции
-                        if (isOperatorChar(op2))
+            while (!stackOperator.empty ()) {
+                //if (stackNumer.size ()==1) return stackNumer.peek (); //Если одно число в стеке, то не считаем
+                op1 = stackOperator.peek ();
+                if ( op1=='(' )   return stackNumer.peek (); // Если открытая скобка, ни чего не считаем
+                if ( op1==')' ) {
+                    stackOperator.pop ();
+                    if (stackOperator.peek ()=='(' )
                         {
-                            if (stackOperator.empty() && stackNumer.size()>=2)
-                            { // Если стек операций пустой
-                                stackNumer.push(calcOperation(op2,stackNumer.pop(),stackNumer.pop()));
-                                stackOperator.push(op1);
-                            }
-                            else
-                            if (powerOperation(op1,op2))
-                                {
-                                if (stackNumer.size()>=2)
-                                    {stackNumer.push(calcOperation(op2,stackNumer.pop(),stackNumer.pop()));
-                                     stackOperator.push(op1);
-                                    }
-                                else{
-                                    stackOperator.push(op2);
-                                    stackOperator.push(op1);
-                                    return "Недостаточно цифр для подсчета";
-                                    }
-                                    return stackNumer.peek();
-                                }
-                                else
-                                    {
-                                        stackOperator.push(op2);
-                                        stackOperator.push(op1);
-                                        return stackNumer.peek();
-                                    }
-                        } else {
-                                stackOperator.push(op2);
-                                stackOperator.push(op1);
-                                return stackNumer.peek();
-                                }
-                    } ////////////// WHILE
-                        if (stackNumer.size()>=2){//А если в стеке только одна операция была
-                        stackOperator.push(op1);
-                        dig1=stackNumer.pop();
-                        resultText= calcOperation(op1,dig1,stackNumer.peek());
-                        stackNumer.push(dig1);
-                        return resultText;
-                    }
-                    else {
+                            stackOperator.pop ();
+                            return stackNumer.peek ();
+                        }   else {
 
-                        stackOperator.push(op1);
-                        return "Скорее всего не достаточно чисел";
+                        stackNumer.push ( calcOperation ( stackOperator.pop () , stackNumer.pop () , stackNumer.pop () ) ); // расчитываем и записываем в стек
+                        stackOperator.push ( ')' );    /// Ложим обратно скобку
+                        continue;
+                    }}
+
+                if ( !stackOperator.empty () && stackNumer.size ()>=2)/////////////IF
+                {
+                    op1=stackOperator.pop ();
+                    dig1=stackNumer.pop ();
+                    if (!stackOperator.empty ())
+                        op2 = stackOperator.peek ();
+                        if (isOperatorChar ( op2 )){
+                        if ( powerOperation ( op1 , op2 ) ) {
+                            stackNumer.push ( calcOperation ( op2 , dig1 , stackNumer.pop () ) ); // расчитываем и записываем в стек
+                            System.out.println("LOG 1 = "+stackNumer.peek ());
+                            stackOperator.pop ();
+                            stackOperator.push ( op2 );
+                            return stackNumer.peek ();
+                        } else
+                            stackNumer.push ( calcOperation ( op1 , dig1 , stackNumer.pop () ) ); // расчитываем и записываем в стек
+                        System.out.println("LOG 2 = "+stackNumer.peek ());
+                            stackOperator.pop ();
+                        stackOperator.push ( op1 );
+                            return stackNumer.peek ();
                     }
-              }//if (isOperatorChar(op1)) END
-            } catch (Exception e) {
-            return "если нет в стеке операторов";
+                }
+
+                else
+                    dig1=stackNumer.pop ();
+                    System.out.println("LOG op1= "+op1+" dig1= "+dig1+" op1= "+stackNumer.peek ());
+
+                System.out.println("LOG 3 = "+stackNumer.peek ());
+                resultText = calcOperation ( op1 , dig1 , stackNumer.peek () ); // расчитываем и записываем в стек
+                stackOperator.push ( op1 );
+                stackNumer.push ( dig1 );
+
+
+                return resultText;
+                // / *********************************////////////// END IF
+                }//if (isOperatorChar(op1)) END`
+
         }
-        System.out.println("LOG на выходе кальк stackNumer ="+stackNumer);
-        System.out.println("LOG на выходе кальк stackOperator ="+stackOperator);
+        catch (Exception e) { return "TRY CATCH";        }
+
         return stackNumer.peek()+" на выходе кальк";
     }
 }

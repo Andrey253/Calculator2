@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
         }        // Разрешение на ввод ")"
 
         greateStacks ();
-        System.out.println ( "LOG onClickButton stackNumer =" + stackNumer );
-        System.out.println ( "LOG onClickButton stackOperator =" + stackOperator );
+        System.out.println ( "LOG после калькулятора stackNumer =" + stackNumer );
+        System.out.println ( "LOG после калькулятора stackOperator =" + stackOperator );
         updateIn ();
     }
 
@@ -133,6 +133,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         return false;
     }
+    public static boolean isBulFuncs(String s)  // Проверка является ли последний символ оператором
+    {
+        if ( s.equals ( "-" ) || s.equals ( "÷" ) || s.equals ( "x" ) || s.equals ( "+" ) || s.equals ( "/" ) )
+            return true;
+        return false;
+    }
 
     /*    public static boolean IsNum(String str) { // Является ли последний введеный символ цифрой/числом кроме 0
             if (str==".") return true;
@@ -165,6 +171,34 @@ public class MainActivity extends AppCompatActivity {
             char x;
             x = s.charAt ( s.length () - 1 );
             if ( x=='-' || x=='÷' || x=='x' || x=='+' || x=='/' || x=='(' || x==')'  )
+                return true;
+        } catch ( Exception r ) {
+            System.out.println ( "LOG out IsNum" );
+        }
+
+        return false;
+    }
+    public static boolean stringIsSkCl(String s)  // Проверка является ли последний символ ")"
+    {
+        if ( s.length () <= 0 ) return false;
+        try {
+            char x;
+            x = s.charAt ( s.length () - 1 );
+            if (  x==')'  )
+                return true;
+        } catch ( Exception r ) {
+            System.out.println ( "LOG out IsNum" );
+        }
+
+        return false;
+    }
+    public static boolean stringIsSkOp(String s)  // Проверка является ли последний символ ")"
+    {
+        if ( s.length () <= 0 ) return false;
+        try {
+            char x;
+            x = s.charAt ( s.length () - 1 );
+            if (  x=='('  )
                 return true;
         } catch ( Exception r ) {
             System.out.println ( "LOG out IsNum" );
@@ -322,19 +356,18 @@ public class MainActivity extends AppCompatActivity {
         String dig2 = "";
         int i = 0;
         int z=0;
+        System.out.println ( "LOG в калькуляторе" + STAK );
         for (i = 0; i < STAK.size (); i++) {
-            if ( stringIsNum ( STAK.get ( i ) ) ) {
-                stackNumer.push ( STAK.get ( i ) );
-            }
-            if ( stringIsOper ( STAK.get ( i ) ) )
+
+            if ( stringIsOper ( STAK.get ( i ) ) )      /////////// Обработка получения операции
             {
+                System.out.println ( "LOG 1" );
                 stackOperator.push ( STAK.get ( i ) );
-                while (z<7 && stackNumer.size () >= 2 && stackOperator.size () >= 2 ) {
+                while (z<70 && stackNumer.size () >= 2 && stackOperator.size () >= 2 ) {
                     op1 = stackOperator.pop ();
                     op2 = stackOperator.pop ();
                     dig1 = stackNumer.pop ();
                     dig2 = stackNumer.pop ();
-                    System.out.println ( "LOG powerOperation = " + powerOperation(op1 , op2) );
                     if ( powerOperation ( op1 , op2 ) ) {
                         stackNumer.push ( calcOperation ( op2 , dig1 , dig2 ) ); // расчитываем и записываем в стек
                         stackOperator.push ( op1 );
@@ -346,64 +379,18 @@ public class MainActivity extends AppCompatActivity {
                         stackNumer.push (dig1);break;
                     }z++;
                 }
-                System.out.println ( "LOG i = " + i );
+            }
+            if ( stringIsNum ( STAK.get ( i ) ) ) {     //////////// Обработка получения числа
+                stackNumer.push ( STAK.get ( i ) );
+            }
+            if ( stringIsSkOp ( STAK.get ( i ) ) ) {     //////////// Обработка получения "("
+                stackNumer.push ( STAK.get ( i ) );
             }
 
-        }return stackNumer.peek ();
+        }
+        ///////// Если конец строки, то завершаем операции
+        System.out.println ( "LOG конец строки STAK = " + STAK );
+        ///////// Если конец строки, то завершаем операции
+        return stackNumer.peek ();
     }
-
-/*                op1 = stackOperator.peek ();
-                if ( op1=='(' )
-                    return stackNumer.peek (); // Если открытая скобка, ни чего не считаем
-                if ( op1==')' ) {
-                    op1 = stackOperator.pop ();
-                    if ( stackOperator.peek ()=='(' ) {
-                        stackOperator.pop ();
-                        return stackNumer.peek ();
-                    } else {
-
-                        stackNumer.push ( calcOperation ( stackOperator.pop () , stackNumer.pop () , stackNumer.pop () ) ); // расчитываем и записываем в стек
-                        stackOperator.push ( ')' );    /// Ложим обратно скобку
-                        continue;
-                    }
-                }
-
-                dig1 = stackNumer.pop ();
-                System.out.println ( "LOG op1= " + op1 + " dig1= " + dig1 + " op1= " + stackNumer.peek () );
-
-                System.out.println ( "LOG 3 = " + stackNumer.peek () );
-                resultText = calcOperation ( op1 , dig1 , stackNumer.peek () ); // расчитываем и записываем в стек
-                stackOperator.push ( op1 );
-                stackNumer.push ( dig1 );
-return "";
-    }
-
-    public String calculatorNum() {
-        if ( !stackOperator.empty () && stackNumer.size () >= 2 )/////////////IF
-        {
-            op1 = stackOperator.pop ();
-            dig1 = stackNumer.pop ();
-            if ( !stackOperator.empty () )
-                op2 = stackOperator.peek ();
-            if ( isOperatorChar ( op2 ) ) {
-                if ( powerOperation ( op1 , op2 ) ) {
-                    stackNumer.push ( calcOperation ( op2 , dig1 , stackNumer.pop () ) ); // расчитываем и записываем в стек
-                    System.out.println ( "LOG 1 = " + stackNumer.peek () );
-                    stackOperator.pop ();
-                    stackOperator.push ( op2 );
-                    return stackNumer.peek ();
-                } else
-                    stackNumer.push ( calcOperation ( op1 , dig1 , stackNumer.pop () ) ); // расчитываем и записываем в стек
-                System.out.println ( "LOG 2 = " + stackNumer.peek () );
-                stackOperator.pop ();
-                stackOperator.push ( op2 );
-                return stackNumer.peek ();
-            }
-            if ( op2=='(' ) {// Если второй оператор не булева функция
-                stackNumer.push ( calcOperation ( op1 , dig1 , stackNumer.pop () ) );
-                stackOperator.push ( op2 );
-                return stackNumer.peek ();
-            }
-        }return "";
-    }*/
 }
